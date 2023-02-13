@@ -13,8 +13,9 @@ const useTodos = () => {
     const [loader, setLoader] = useState(false)
     const [isUpdate, setIsUpdate] = useState(false)
     const [attachmentURL, setAttachmentURL] = useState('')
-
+    const [itemEditInput, setItemEditInput] = useState("")
     const [attachmentImage, setAttachmentImage] = useState({})
+    const [alertBox, setAlertBox] = useState(false)
     // const [oldItem, setOldItem] = useState({})
 
     useEffect(() => {
@@ -28,6 +29,7 @@ const useTodos = () => {
     const getTodosHandler = async () => {
         console.log("get todos method");
         console.log("get todos method is running +++++++++++>");
+
         try {
             setLoader(true)
             const querySnapshot = await getDocs(collection(db, "todoapp"));
@@ -61,31 +63,40 @@ const useTodos = () => {
     const onFileChangeHandler = async (e: any) => {
         console.log("file change handler", e.target.files[0]);
         setAttachmentImage(e.target.files[0])
-        console.log("attachment Image", attachmentImage);
+        console.log("attachment Image have value", attachmentImage);
 
     }
 
     const onTodoSubmitHandler = async () => {
         console.log("attachment Image", attachmentImage);
-
-
+        console.log("submit button is clicked")
         try {
-            setLoader(true)
-            const storageRef = ref(storage, `/todosImages/${description}.jpg`);
-            const result = await uploadBytes(storageRef, attachmentImage)
-            // const result = await storageRef.put(attachmentImage);
-            console.log("result ========>", result.ref);
-            const downloadURL = await getDownloadURL(result.ref)
-            const newDoc = {
-                description,
-                attachmentURL: downloadURL,
-                createdAt: new Date()
+            if (description != '') {
+                setLoader(true)
+                const storageRef = ref(storage, `/todosImages/${description}.jpg`);
+                const result = await uploadBytes(storageRef, attachmentImage)
+                // const result = await storageRef.put(attachmentImage);
+                console.log("result ========>", result.ref);
+                const downloadURL = await getDownloadURL(result.ref)
+                console.log("downloadURL", downloadURL);
+                const newDoc = {
+                    description,
+                    attachmentURL: downloadURL,
+                    createdAt: new Date()
+                }
+                const docRef = await addDoc(collection(db, 'todoapp'), newDoc)
+                console.log("docRef id ", docRef.id)
+                setTodos([...todos, { ...newDoc, id: docRef.id }])
+                setDescription('')
+                getTodosHandler()
+
             }
-            const docRef = await addDoc(collection(db, 'todoapp'), newDoc)
-            console.log("docRef id ", docRef.id)
-            setTodos([...todos, { ...newDoc, id: docRef.id }])
-            setDescription('')
-            getTodosHandler()
+            else {
+                setAlertBox(true)
+                setTimeout(() => {
+                    setAlertBox(false)
+                }, 2000);
+            }
         }
         catch (e) {
             console.log("error on onTodoSubmitHandler", e)
@@ -129,6 +140,7 @@ const useTodos = () => {
     const todoEditHandler = (item: TodoType) => {
         console.log("updated handler====-", item);
         setTodoDescription(item.description)
+        setItemEditInput(item.description)
         setIsUpdate(true)
         setTodoId(item.id)
     }
@@ -170,9 +182,11 @@ const useTodos = () => {
 
     const todoUpdateHandler = async (item: TodoType) => {
         try {
+            setLoader(true)
+
             await updateDoc(doc(db, "todoapp", item.id), {
                 capital: true,
-                description: todoDescription,
+                description: itemEditInput,
                 createdAt: new Date()
             });
             let updatedTodos = todos.map((todo: TodoType) => {
@@ -204,6 +218,32 @@ const useTodos = () => {
             setLoader(false)
         }
     }
+    async function deleteAllDocuments(collection) {
+        const snapshot = await collection.get();
+        snapshot.forEach(doc => {
+            doc.ref.delete();
+        });
+    }
+    const onTodoDeleteAllHandler = async () => {
+        console.log("get into deleteHandler")
+        try {
+            setLoader(true)
+            const desertRef = ref(storage, `todosImages/`);
+            const firestore = firebase.firestore();
+            const collectionRef = firestore.collection("your-collection-name");
+            deleteAllDocuments(collectionRef);
+            let filteredTodos: TodoType[] = []
+            setTodos(filteredTodos)
+
+        }
+        catch (error) {
+            console.log("error in todoDeleteHandler", error);
+
+        }
+        finally {
+            setLoader(false)
+        }
+    }
 
     return {
         todos,
@@ -212,6 +252,9 @@ const useTodos = () => {
         description,
         todoDescription,
         todoId,
+        itemEditInput,
+        alertBox,
+        setItemEditInput,
         setTodoId,
         setTodoDescription,
         setTodos,
@@ -221,7 +264,8 @@ const useTodos = () => {
         todoDeleteHandler,
         setDescription,
         todoEditHandler,
-        onFileChangeHandler
+        onFileChangeHandler,
+        onTodoDeleteAllHandler
     }
 
 }

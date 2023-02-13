@@ -1,11 +1,12 @@
 
 import react from 'react'
-import Todos from '../components/Todos'
+// import TodoCard from '../components/TodoCard'
+import Todos from './Todos'
 export default function Home() {
   return (
     <>
-    this is home page
-    <Todos/>
+
+      <Todos />
     </>
   )
 }
