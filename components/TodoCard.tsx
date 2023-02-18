@@ -80,12 +80,12 @@ function Todos() {
                                 "  w="auto" >
                                         <Text fontSize="1.2rem"
                                         >{item.description}</Text>
-                                        
+
                                         <Image
                                             boxSize='50px'
                                             objectFit='cover'
                                             src={item?.attachmentURL}
-                                            alt='Dan Abramov'
+                                            alt='No Image'
                                         />
                                         <Box display='grid' gap={1} gridAutoFlow="column dense">
                                             <MainButton onClick={() => {

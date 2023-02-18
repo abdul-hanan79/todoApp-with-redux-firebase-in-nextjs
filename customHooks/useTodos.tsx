@@ -1,3 +1,6 @@
+
+import firebase from 'firebase/app';
+import 'firebase/storage';
 import { use, useEffect, useState } from "react"
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
@@ -68,10 +71,11 @@ const useTodos = () => {
     }
 
     const onTodoSubmitHandler = async () => {
-        console.log("attachment Image", attachmentImage);
+        console.log("attachment Image onTodoSubmitHandler", attachmentImage);
         console.log("submit button is clicked")
         try {
             if (description != '') {
+
                 setLoader(true)
                 const storageRef = ref(storage, `/todosImages/${description}.jpg`);
                 const result = await uploadBytes(storageRef, attachmentImage)
@@ -183,7 +187,26 @@ const useTodos = () => {
     const todoUpdateHandler = async (item: TodoType) => {
         try {
             setLoader(true)
+            // const desertRef = ref(storage, `todosImages/${item.description}.jpg`);
+            // await deleteObject(desertRef)
+            try {
+                // Reference to the original image
+                var oldImageRef = firebase.storage().ref(`todosImages/${item.description}.jpg`);
 
+                // Reference to the new image
+                var newImageRef = firebase.storage().ref('new_image.jpg');
+
+                // Copy the image to the new location
+                await oldImageRef.copyTo(newImageRef);
+
+                // Delete the old image
+                await oldImageRef.delete();
+
+                console.log('Image renamed successfully');
+            } catch (error) {
+                console.error('Error renaming the image:', error);
+            }
+            // console.log("update the vlude",item.description)
             await updateDoc(doc(db, "todoapp", item.id), {
                 capital: true,
                 description: itemEditInput,
@@ -196,7 +219,7 @@ const useTodos = () => {
                 if (item.id === todo.id) {
                     return {
 
-                        description: todoDescription,
+                        description: itemEditInput,
                         createdAt: new Date(),
                         id: todo.id,
 
@@ -218,31 +241,31 @@ const useTodos = () => {
             setLoader(false)
         }
     }
-    async function deleteAllDocuments(collection) {
-        const snapshot = await collection.get();
-        snapshot.forEach(doc => {
-            doc.ref.delete();
-        });
-    }
+    // async function deleteAllDocuments(collection) {
+    //     const snapshot = await collection.get();
+    //     snapshot.forEach(doc => {
+    //         doc.ref.delete();
+    //     });
+    // }
     const onTodoDeleteAllHandler = async () => {
         console.log("get into deleteHandler")
-        try {
-            setLoader(true)
-            const desertRef = ref(storage, `todosImages/`);
-            const firestore = firebase.firestore();
-            const collectionRef = firestore.collection("your-collection-name");
-            deleteAllDocuments(collectionRef);
-            let filteredTodos: TodoType[] = []
-            setTodos(filteredTodos)
+        // try {
+        //     setLoader(true)
+        //     const desertRef = ref(storage, `todosImages/`);
+        //     const firestore = firebase.firestore();
+        //     const collectionRef = firestore.collection("your-collection-name");
+        //     deleteAllDocuments(collectionRef);
+        //     let filteredTodos: TodoType[] = []
+        //     setTodos(filteredTodos)
 
-        }
-        catch (error) {
-            console.log("error in todoDeleteHandler", error);
+        // }
+        // catch (error) {
+        //     console.log("error in todoDeleteHandler", error);
 
-        }
-        finally {
-            setLoader(false)
-        }
+        // }
+        // finally {
+        //     setLoader(false)
+        // }
     }
 
     return {
