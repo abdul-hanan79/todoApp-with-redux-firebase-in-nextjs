@@ -8,10 +8,10 @@ import MainButton from './MainButton'
 import DeleteAlertDialog from './DeleteAlrtDialog'
 function Todos() {
     const { loader, description, todoDescription, todoId, setTodoId, itemEditInput,
-        setItemEditInput, setTodoDescription, setDescription, todos, onFileChangeHandler, setTodos, todoEditHandler, onTodoSubmitHandler, todoDeleteHandler, todoUpdateHandler, isUpdate, alertBox, onTodoDeleteAllHandler } = useTodos()
+        setItemEditInput, setTodoDescription, setDescription, storeTodos, onFileChangeHandler,  todoEditHandler, onTodoSubmitHandler, todoDeleteHandler, todoUpdateHandler, isUpdate, alertBox, onTodoDeleteAllHandler } = useTodos()
 
     console.log("description", description)
-    { console.log("value of todo in todos.tsx", todos) }
+    { console.log("value of todo in todos.tsx", storeTodos) }
     return (
         <Box w="100%" h="auto" bg="rgb(209,228,244)" p={3} borderRadius={15}>
             {alertBox && <Alert status='error'>
@@ -48,7 +48,7 @@ function Todos() {
             />}
             {
 
-                todos.map((item: TodoType, index: number) => {
+                storeTodos.map((item: TodoType, index: number) => {
                     return (
                         <>
                             {/* {loader && <h1>Loading...</h1>}
