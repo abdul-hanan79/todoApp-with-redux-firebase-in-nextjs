@@ -8,7 +8,7 @@ import MainButton from './MainButton'
 import DeleteAlertDialog from './DeleteAlrtDialog'
 function Todos() {
     const { loader, description, todoDescription, todoId, setTodoId, itemEditInput,
-        setItemEditInput, setTodoDescription, setDescription, storeTodos, onFileChangeHandler,  todoEditHandler, onTodoSubmitHandler, todoDeleteHandler, todoUpdateHandler, isUpdate, alertBox, onTodoDeleteAllHandler } = useTodos()
+        setItemEditInput, setTodoDescription, setDescription, storeTodos, onFileChangeHandler, todoEditHandler, onTodoSubmitHandler, todoDeleteHandler, todoUpdateHandler, isUpdate, alertBox, onTodoDeleteAllHandler } = useTodos()
 
     console.log("description", description)
     { console.log("value of todo in todos.tsx", storeTodos) }
@@ -51,19 +51,6 @@ function Todos() {
                 storeTodos.map((item: TodoType, index: number) => {
                     return (
                         <>
-                            {/* {loader && <h1>Loading...</h1>}
-                            <div key={index}>
-                                <p>{items.id}</p>
-                                <img style={{ width: 50, height: 50 }} src={items?.attachmentURL} alt="" />
-                                
-
-                                {isUpdate && (items.id == todoId) ? <div> <input type="text" placeholder='enter' value={todoDescription} onChange={(e) => setTodoDescription(e.target.value)} /><button onClick={() => todoUpdateHandler(items)}>Update</button></div> : <div>  <h1>{items.description}</h1><button onClick={() => todoEditHandler(items)}>Edit</button></div>}
-
-
-                                <button onClick={() => todoDeleteHandler(items)}>Delete</button>
-                            </div> */}
-
-
                             <Box key={index} mt={2}  >
                                 {/* checkbox errror */}
                                 <Box bg="white" w="100%" border='1px' borderColor='gray.200' borderRadius={10} p={2}>
@@ -80,7 +67,6 @@ function Todos() {
                                 "  w="auto" >
                                         <Text fontSize="1.2rem"
                                         >{item.description}</Text>
-
                                         <Image
                                             boxSize='50px'
                                             objectFit='cover'
@@ -93,7 +79,7 @@ function Todos() {
                                             }} icon={<EditIcon boxSize={3} />} />
                                             <DeleteAlertDialog onClick={() => todoDeleteHandler(item)} icon={<DeleteIcon boxSize={3} />} />
 
-                                            {/* <MainButton onClick={() => deleteHandler(item)} icon={<DeleteIcon boxSize={3} />} /> */}
+
                                         </Box>
                                     </Box>}
                                 </Box>

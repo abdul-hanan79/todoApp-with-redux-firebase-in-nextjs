@@ -90,9 +90,19 @@ export const deleteTodo = createAsyncThunk('todos/delteTodo', async (item) => {
     }
 
 })
-export const updateTodo = createAsyncThunk('todos/updateTodo', async (itemEditInput) => {
+
+interface UpdateTodoArgs {
+    itemEditInput: string;
+    item: {
+        id: string,
+        description: string,
+        attachmentURL: string,
+        createdAt: object
+    }
+}
+export const updateTodo = createAsyncThunk("todos/updateTodos", async ({ itemEditInput, item }: UpdateTodoArgs) => {
     try {
-        console.log("item found in thunk update action", itemEditInput);
+        console.log("item found in thunk update action", itemEditInput, item);
 
 
         // !IMPORT TO DO 
@@ -101,19 +111,13 @@ export const updateTodo = createAsyncThunk('todos/updateTodo', async (itemEditIn
         // await deleteDoc(doc(db, "todoapp", item.id))
         // let filteredTodos = todos.filter((todo) => item.id !== todo.id)
         // setTodos(filteredTodos)
-        // await updateDoc(doc(db, "todoapp", item.id), {
-        //     capital: true,
-        //     description: itemEditInput,
-        //     createdAt: new Date()
-        // });
-        // await updateDoc(doc(db, "todoapp", item.id), {
-        //     capital: true,
-        //     description: itemEditInput,
-        //     createdAt: new Date()
-        // });
+        await updateDoc(doc(db, "todoapp", item.id), {
+            capital: true,
+            description: itemEditInput,
+            createdAt: new Date()
+        });
+        return { itemEditInput, item }
 
-
-        // return item
     } catch (error) {
         alert(`error in update todo  ${error}`)
     }
@@ -165,16 +169,33 @@ const todoSlice = createSlice({
         });
         builder.addCase(updateTodo.fulfilled, (state, action) => {
 
-            console.log("update  case in extra reduce", action.payload);
-            console.log("update  case in extra reduce", action.payload);
+            console.log("item  case in extra reduce", action.payload?.itemEditInput);
+            console.log("update  case in extra reduce", action.payload?.item);
             const todos = state.todos;
-            const item = action.payload
-            // let filteredTodos = todos.filter((todo) => item.id !== todo.id)
-            // let newState: any = {
-            //     ...state,
-            //     todos: filteredTodos,
-            // };
-            // return newState;
+            const item = action.payload?.item
+            let updatedTodos = todos.map((todo) => {
+                console.log('====================================');
+                console.log(item.id, todo.id);
+                console.log('====================================');
+                if (item.id === todo.id) {
+                    return {
+
+                        description: action.payload?.itemEditInput,
+                        createdAt: new Date(),
+                        id: todo.id,
+                        attachmentURL: item?.attachmentURL
+                    }
+                }
+                else {
+                    return todo
+                }
+            })
+            console.log("updated Todos", updatedTodos);
+            let newState: any = {
+                ...state,
+                todos: updatedTodos,
+            };
+            return newState;
         });
 
 

@@ -194,7 +194,7 @@ const useTodos = () => {
         try {
             setLoader(true)
             console.log("edit input in update hadnler", itemEditInput);
-            dispatch(updateTodo(itemEditInput, item))
+            dispatch(updateTodo({itemEditInput, item}))
             // const desertRef = ref(storage, `todosImages/${item.description}.jpg`);
             // await deleteObject(desertRef)
             // try {
