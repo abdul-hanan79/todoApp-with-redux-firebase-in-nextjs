@@ -6,9 +6,13 @@ import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Checkbox, Input, T
 import { DeleteIcon, AddIcon, EditIcon, CheckIcon } from '@chakra-ui/icons'
 import MainButton from './MainButton'
 import DeleteAlertDialog from './DeleteAlrtDialog'
+import { useSelector } from 'react-redux'
 function Todos() {
     const { loader, description, todoDescription, todoId, setTodoId, itemEditInput,
-        setItemEditInput, setTodoDescription, setDescription, storeTodos, onFileChangeHandler, todoEditHandler, onTodoSubmitHandler, todoDeleteHandler, todoUpdateHandler, isUpdate, alertBox, onTodoDeleteAllHandler } = useTodos()
+        setItemEditInput, setTodoDescription, setDescription, onFileChangeHandler, todoEditHandler, onTodoSubmitHandler, todoDeleteHandler, todoUpdateHandler, isUpdate, alertBox, onTodoDeleteAllHandler } = useTodos()
+
+
+    const storeTodos = useSelector((state: any) => state.todoSlice.todos)
 
     console.log("description", description)
     { console.log("value of todo in todos.tsx", storeTodos) }
