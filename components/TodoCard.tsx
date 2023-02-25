@@ -9,13 +9,24 @@ import DeleteAlertDialog from './DeleteAlrtDialog'
 import { useSelector } from 'react-redux'
 function Todos() {
     const { loader, description, todoDescription, todoId, setTodoId, itemEditInput,
-        setItemEditInput, setTodoDescription, setDescription, onFileChangeHandler, todoEditHandler, onTodoSubmitHandler, todoDeleteHandler, todoUpdateHandler, isUpdate, alertBox, onTodoDeleteAllHandler } = useTodos()
+        setItemEditInput, user, currentUserRequestLoader, setTodoDescription, setDescription, onFileChangeHandler, todoEditHandler, onTodoSubmitHandler, todoDeleteHandler, todoUpdateHandler, isUpdate, alertBox, onTodoDeleteAllHandler } = useTodos()
 
 
     const storeTodos = useSelector((state: any) => state.todoSlice.todos)
+    console.log("user is", user?.email);
+    const email = user?.email
+    const username = email?.split("@")[0];
+    console.log("the username is",username); // Output: "abdulhanan3279"
 
     console.log("description", description)
     { console.log("value of todo in todos.tsx", storeTodos) }
+    if (currentUserRequestLoader) {
+        return <h1><Spinner thickness='7px'
+            speed='0.65s'
+            emptyColor='gray.200'
+            color='blue.500'
+            size='xl' /></h1>
+    }
     return (
         <Box w="100%" h="auto" bg="rgb(209,228,244)" p={3} borderRadius={15}>
             {alertBox && <Alert status='error'>
@@ -25,6 +36,7 @@ function Todos() {
             </Alert>}
             {/* <Input placeholder='extra small size' size='xs' /> */}
             <Box display='flex'>
+                {user && <h1>{username}</h1>}
                 <Input
                     color='#343a40'
                     size='lg'

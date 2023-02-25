@@ -7,6 +7,7 @@ import { updateTodo, deleteTodo, submitTodo, fetchTodos } from "../store/todoSli
 import RootState from '../types/RootState';
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from 'redux';
+import { useRouter } from 'next/router';
 
 
 // const storeTodos=useSelector((store)=>store.todoSlice.todos)
@@ -28,10 +29,20 @@ const useTodos = () => {
     const [itemEditInput, setItemEditInput] = useState("")
     const [attachmentImage, setAttachmentImage] = useState({})
     const [alertBox, setAlertBox] = useState(false)
+    const router = useRouter()
     const dispatch = useDispatch<ThunkDispatch<RootState, any, AnyAction>>();
     console.log("value of edit item input", itemEditInput);
 
+    const auth = useSelector((store) => store.authSlice)
 
+    // console.log("storeTodos", storeTodos);
+    console.log("auth calling back", auth);
+
+    useEffect(() => {
+        if (!auth.isLoggedIn && auth.currentUserRequestLoader) {
+            router.push("/login");
+        }
+    }, [auth])
 
     useEffect(() => {
         console.log("UseTodos component just render");
@@ -168,7 +179,9 @@ const useTodos = () => {
         setDescription,
         todoEditHandler,
         onFileChangeHandler,
-        onTodoDeleteAllHandler
+        onTodoDeleteAllHandler,
+        currentUserRequestLoader: auth.currentUserRequestLoader,
+        user:auth.user
     }
 
 }
